@@ -55,7 +55,7 @@ class ServerNetworkAccessTest {
     assertEquals("192.168.1.44", allInterfaces.advertisedHost("192.168.1.44", "0.0.0.0"))
     assertFalse(allInterfaces.isLoopbackOnly("192.168.1.44"))
     assertEquals("localhost", allInterfaces.advertisedHost(null, "0.0.0.0"))
-    assertTrue(allInterfaces.isLoopbackOnly(null))
+    assertFalse(allInterfaces.isLoopbackOnly(null))
 
     val loopback = ServerBindConfig(ServerBindMode.LOOPBACK)
     assertEquals("localhost", loopback.advertisedHost("192.168.1.44", "127.0.0.1"))

@@ -41,7 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ollitert.llm.server.R
 import com.ollitert.llm.server.common.copyToClipboard
-import com.ollitert.llm.server.common.getWifiIpAddress
+import com.ollitert.llm.server.common.getReachableIpv4Address
 import com.ollitert.llm.server.data.prefs.ServerBindMode
 import com.ollitert.llm.server.data.prefs.formatHostForUrl
 import com.ollitert.llm.server.ui.settings.SettingsViewModel
@@ -71,7 +71,7 @@ internal fun HomeAssistantCard(vm: SettingsViewModel, context: Context) {
       SettingDivider()
 
       val currentPort = vm.portText.toIntOrNull() ?: vm.portEntry.saved
-      val wifiIp = remember { getWifiIpAddress(context) }
+      val wifiIp = remember { getReachableIpv4Address(context) }
       val bindMode = ServerBindMode.fromPreference(vm.serverBindModeEntry.current)
       val currentIp = when (bindMode) {
         ServerBindMode.ALL_INTERFACES -> wifiIp ?: "<YOUR_DEVICE_IP>"

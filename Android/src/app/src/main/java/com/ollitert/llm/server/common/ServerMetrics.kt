@@ -69,9 +69,7 @@ object ServerMetrics {
   private val _bindAddress = sessionFlow<String?>(null)
   val bindAddress: StateFlow<String?> = _bindAddress.asStateFlow()
 
-  // True when the server is reachable only via loopback (no Wi-Fi IP detected).
-  // UI uses this to label the endpoint as "loopback only" so users know remote LAN
-  // clients can't reach it but on-device clients (termux, aichat) can.
+  // True when the server listens only on loopback (127.0.0.1), not when bound to all interfaces.
   private val _isLoopbackOnly = sessionFlow(false)
   val isLoopbackOnly: StateFlow<Boolean> = _isLoopbackOnly.asStateFlow()
 

@@ -73,6 +73,46 @@ fun getWifiIpAddress(context: Context): String? {
   return null
 }
 
+/**
+ * Returns an IPv4 address other devices can use to reach this server when listening on all interfaces.
+ *
+ * Prefers the Wi-Fi address for local LAN use, then Tailscale/CGNAT addresses on VPN tunnels
+ * (e.g. `tun0`, `tailscale0`) so MagicDNS and other overlay networks work without Wi-Fi.
+ */
+fun getReachableIpv4Address(context: Context): String? {
+  getWifiIpAddress(context)?.let { return it }
+
+  val tailscaleCandidates = mutableListOf<String>()
+  val otherCandidates = mutableListOf<String>()
+  try {
+    for (iface in NetworkInterface.getNetworkInterfaces()) {
+      if (!iface.isUp || iface.isLoopback) continue
+      for (addr in iface.inetAddresses) {
+        if (addr !is Inet4Address || addr.isLoopbackAddress) continue
+        val host = addr.hostAddress ?: continue
+        if (isTailscaleCgnatAddress(host)) {
+          tailscaleCandidates.add(host)
+        } else {
+          otherCandidates.add(host)
+        }
+      }
+    }
+  } catch (e: SocketException) {
+    Log.d(TAG, "NetworkInterface enumeration failed while resolving reachable IPv4", e)
+  }
+
+  return tailscaleCandidates.firstOrNull() ?: otherCandidates.firstOrNull()
+}
+
+/** Tailscale assigns addresses from the CGNAT block 100.64.0.0/10. */
+internal fun isTailscaleCgnatAddress(dottedQuad: String): Boolean {
+  val octets = dottedQuad.split('.')
+  if (octets.size != 4) return false
+  val first = octets[0].toIntOrNull() ?: return false
+  val second = octets[1].toIntOrNull() ?: return false
+  return first == 100 && second in 64..127
+}
+
 private fun formatIpAddress(ip: Int): String {
   return "${ip and 0xFF}.${ip shr 8 and 0xFF}.${ip shr 16 and 0xFF}.${ip shr 24 and 0xFF}"
 }

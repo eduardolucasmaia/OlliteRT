@@ -19,7 +19,7 @@ package com.ollitert.llm.server.service
 import android.content.Context
 import android.util.Log
 import com.ollitert.llm.server.R
-import com.ollitert.llm.server.common.getWifiIpAddress
+import com.ollitert.llm.server.common.getReachableIpv4Address
 import com.ollitert.llm.server.data.prefs.BindAddressResult
 import com.ollitert.llm.server.data.prefs.ClientIpAccessPolicy
 import com.ollitert.llm.server.data.prefs.ClientIpPolicyCompileResult
@@ -68,9 +68,9 @@ internal object ServerNetworkMonitor {
         return null to context.getString(R.string.error_invalid_client_ip_policy)
       }
     }
-    val wifiIp = getWifiIpAddress(context)
-    val advertisedHost = bindConfig.advertisedHost(wifiIp, bindHost)
-    val isLoopbackOnly = bindConfig.isLoopbackOnly(wifiIp)
+    val reachableIp = getReachableIpv4Address(context)
+    val advertisedHost = bindConfig.advertisedHost(reachableIp, bindHost)
+    val isLoopbackOnly = bindConfig.isLoopbackOnly(reachableIp)
 
     return ServerNetworkConfig(
       bindHost = bindHost,
