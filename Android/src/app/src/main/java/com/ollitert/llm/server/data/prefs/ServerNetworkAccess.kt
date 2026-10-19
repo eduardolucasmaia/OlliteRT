@@ -73,6 +73,16 @@ fun ServerBindConfig.advertisedHost(reachableAddress: String?, resolvedHost: Str
 fun ServerBindConfig.isLoopbackOnly(@Suppress("UNUSED_PARAMETER") reachableAddress: String?): Boolean =
   mode == ServerBindMode.LOOPBACK
 
+/** Full OpenAI-compatible base URL shown on Status, notifications, and copy actions. */
+fun ServerBindConfig.advertisedEndpointUrl(reachableAddress: String?, port: Int): String {
+  val resolvedHost = when (val resolved = resolveHost()) {
+    is BindAddressResult.Valid -> resolved.host
+    is BindAddressResult.Invalid -> "localhost"
+  }
+  val host = advertisedHost(reachableAddress, resolvedHost)
+  return "http://${formatHostForUrl(host)}:$port/v1"
+}
+
 /** Brackets IPv6 literals when inserting a host into an HTTP URL. */
 fun formatHostForUrl(host: String): String =
   if (':' in host && !(host.startsWith('[') && host.endsWith(']'))) "[$host]" else host

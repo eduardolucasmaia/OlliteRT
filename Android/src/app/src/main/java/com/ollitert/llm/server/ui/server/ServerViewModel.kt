@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ollitert.llm.server.common.ServerStatus
 import com.ollitert.llm.server.data.prefs.ACTION_IN_FLIGHT_DEBOUNCE_MS
+import com.ollitert.llm.server.data.prefs.ServerBindConfig
 import com.ollitert.llm.server.data.repository.DefaultPreferencesRepository
 import com.ollitert.llm.server.data.repository.DefaultServerStateRepository
 import com.ollitert.llm.server.data.repository.PreferencesRepository
@@ -143,6 +144,9 @@ class ServerViewModel @Inject constructor(
     setActionInFlight()
     ServerService.reload(context, port, modelName)
   }
+
+  fun getPort(): Int = preferencesRepository.getPort()
+  fun getServerBindConfig(): ServerBindConfig = preferencesRepository.getServerBindConfig()
 
   fun getBearerToken(): String = preferencesRepository.getBearerToken()
   fun getCorsAllowedOrigins(): String = preferencesRepository.getCorsAllowedOrigins()

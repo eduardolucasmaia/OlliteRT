@@ -67,6 +67,16 @@ class ServerNetworkAccessTest {
   }
 
   @Test
+  fun advertisedEndpointUrlIncludesPortAndPath() {
+    val lan = ServerBindConfig(ServerBindMode.ALL_INTERFACES)
+    assertEquals("http://192.168.1.44:8000/v1", lan.advertisedEndpointUrl("192.168.1.44", 8000))
+    assertEquals("http://localhost:9000/v1", lan.advertisedEndpointUrl(null, 9000))
+
+    val loopback = ServerBindConfig(ServerBindMode.LOOPBACK)
+    assertEquals("http://localhost:8000/v1", loopback.advertisedEndpointUrl("192.168.1.44", 8000))
+  }
+
+  @Test
   fun allowOnlyMatchesExactAddressesAndCidrs() {
     val policy = compilePolicy(
       ClientIpPolicyMode.ALLOW_ONLY,
